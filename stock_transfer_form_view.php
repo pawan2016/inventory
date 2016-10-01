@@ -84,18 +84,30 @@
 </style>
 <?php /*height:100px;overflow:hidden;overflow-y: scroll;*/?>
 <?php
+
+
 if($view_page=='1')
 {
 
 	$view_transfer_detail=$view_data['stock_transfer_detail'];
 	$stock_transfer_number_view=$view_transfer_detail->stock_transfer_number;
 	$stock_transfer_date_view=$view_transfer_detail->stock_transfer_date;
+	$view_transfer_aurthorized =$view_transfer_detail->access_level_status;
+	if($view_transfer_aurthorized=='1'){
+		$aurthorized_condition ='Yes';
+		}else{
+			
+		$aurthorized_condition ='No';	
+	  }
+	$view_transfer_narration =$view_transfer_detail->stock_transfer_narration;
 	//$transfer_office_data=$this->db->get_where('office_master',array('office_id'=>$view_transfer_detail->office_id))->row();
-	$this->db->where('office_id',$view_transfer_detail->stock_transfer_to_office_id);
-	$this->db->select('office_master.*,regional_store_master.regional_store_type')->from('office_master,regional_store_master');
+
+	$this->db->select('office_master.*,regional_store_master.regional_store_type')->from('office_master');
+
+		$this->db->join('regional_store_master','office_master.regional_store_id = regional_store_master.regional_store_id');
+		$this->db->where('office_id',$view_transfer_detail->stock_transfer_to_office_id);
 	$transfer_office_data=$this->db->get()->row();
 
-	$this->db->join('regional_store_master','office_master.regional_store_id = regional_store_master.regional_store_id');
 	$transfer_to_view=$transfer_office_data->office_name.'-'.$transfer_office_data->office_operation_type.'('.$transfer_office_data->regional_store_type.')';
 	$stock_transfer_mode_view=$view_transfer_detail->stock_transfer_mode;
 	$stock_transfer_mode_number_view=$view_transfer_detail->stock_transfer_mode_number;
@@ -265,7 +277,10 @@ if($view_page=='1')
 									
 								</div>
 								<div  id="stock_serial_list0" style="" class="form-group col-lg-4 view_scroll no_print">
-								<?php $transferred_serial_numbers=$view_data['stock_transfer_product_serials_detail'][$product_transferred->stock_transfer_product_id];?>
+								<?php $transferred_serial_numbers=$view_data['stock_transfer_product_serials_detail'][$product_transferred->stock_transfer_product_id];
+
+?>
+								
 									<select data-rel="chosen" class="form-control" id="stock_transfer_product_serial_number_view<?php echo $val_serials->stock_transfer_product_serial_number_id;?>" name="stock_transfer_product_serial_number_view[]" multiple  disabled="disabled" >
 									<?php
 									foreach($transferred_serial_numbers as $val_serials)
@@ -444,47 +459,73 @@ if($view_page=='1')
 							<div class="form-group col-lg-2 showmyprint">
 								<label class="control-label">Remarks&nbsp;:&nbsp;</label>
 							</div>
+							<div class="form-group col-lg-2 showmyprint">
+								<label class="control-label">Authorized&nbsp;:&nbsp;</label><?php echo $aurthorized_condition; ?>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-lg-2 showmyprint">
+								<label class="control-label">Narration&nbsp;:&nbsp;</label><?php echo $view_transfer_narration; ?>
+							</div>
+							
 						</div>
 					</div>
 				</div>
 				<div class="box col-lg-12 col-md-12 col-xs-12" style="min-height:300px !important;">
 					<div class="box-content">
-						<table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+						<table class="table table-bordered">
 							<thead>
 								<tr>
 									<th class="text-center">Sr. No.</th>
 									<th class="text-center">Product Name.</th>
 									<th class="text-center">Net Weight (in gm)</th>
-									<th class="text-center">Net Quantity Received</th>
+									<th class="text-center">Net Quantity Received  (In Nos)</th>
 								</tr>
 							</thead>
 							<tbody>
 							<?php $i=1;
+							        
 								 if(!empty($view_transfer_product)){
-								 foreach($view_transfer_product as $view_transfer_productp){?>
+									 $grand_total=0;
+									 $weight_total=0;
+								 foreach($view_transfer_product as $view_transfer_productp){
+									$grand_total += $view_transfer_productp->stock_transfer_product_quantity;
+									$weight_total += ($view_transfer_productp->stock_transfer_product_weight*$view_transfer_productp->stock_transfer_product_quantity);
+									 
+									 ?>
 									<tr>
 										<td class="text-center"><?php echo $i++;?></td>
 										<td class="center text-center"><?php echo $view_transfer_productp->product_name;?></td>
 										<td class="center text-center"><?php echo $view_transfer_productp->stock_transfer_product_weight*$view_transfer_productp->stock_transfer_product_quantity;?></td>
 										<td class="center text-center"><?php echo $view_transfer_productp->stock_transfer_product_quantity;?></td>
 									</tr>
-								  <?php }}?>
+									
+								  <?php } ?>
+								  <tr><td></td><td class="center text-center">Grand Total</td><td class="center text-center"><?php echo $weight_total;?></td><td class="center text-center"><?php echo $grand_total; ?></td></tr>
+								  <?php } ?>
+								
+								  
+								
 								</tbody>
+								
 						</table>
 					</div>
 				</div>
 				<div class="box col-lg-12 col-md-12 col-xs-12">
-					<div class="box-header well">
-						<h2>For MMTC LTD.</h2>
-					</div>
-					<br/>
+					<div class="box col-lg-6 col-md-6 col-xs-6">
+						</div>
+						<div class="box col-lg-6 col-md-6 col-xs-6">
+							<div class="box-header well">
+						   <h2>For MMTC LTD.</h2>
+					    </div> 
+						</div>
 					<div class="box-content">
 						<div class="row">
 							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Received By<?php echo str_repeat('&nbsp;',15) ?>:&nbsp;</label>.................................
+								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',15) ?>:&nbsp;</label>.................................
 							</div>
 							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Checked By<?php echo str_repeat('&nbsp;',16) ?>:&nbsp;</label>.................................
+								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',16) ?>:&nbsp;</label>.................................
 							</div>
 						</div>
 						<div class="row">
@@ -495,22 +536,38 @@ if($view_page=='1')
 								<label class="control-label">Name & Designation&nbsp;:&nbsp;</label>.................................
 							</div>
 						</div>
-						<div class="row">
-							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',20) ?>:&nbsp;</label>.................................
-							</div>
-							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',20) ?>:&nbsp;</label>.................................
-							</div>
-						</div>
+						
 					</div>
 				</div>
-				<div class="box col-lg-12 col-md-12 col-xs-12" style="margin-top:10px !important;">
-					<div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">PACKING LIST </h2></div><div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">Receipt No.:<?php echo $stock_transfer_number_view; ?> </h2></div>
-					<div class="box-content">
-						<?php echo implode(", ",$arr_sel_serial_numer); ?>
-					</div>
-				</div>
+				               
+							
+						<?php
+							
+							if(!empty($view_transfer_product))
+							{
+							foreach($view_transfer_product as $product_transferred)
+							{
+							?>				
+							<?php $transferred_serial_numbers=$view_data['stock_transfer_product_serials_detail'][$product_transferred->stock_transfer_product_id]; ?>
+							
+									<?php
+									$arr_sel_serial_numer=array();
+									foreach($transferred_serial_numbers as $val_serials)
+									{
+										$arr_sel_serial_numer[]=$val_serials->stock_transfer_product_serial_number;
+								    
+								    }
+									?>
+								  <div class="box col-lg-12 col-md-12 col-xs-12" style="margin-top:10px !important;">
+					               <div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">PACKING LIST:&nbsp;&nbsp;<?php echo $product_transferred->product_name;?> </h2></div><div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">Receipt No:<?php echo $stock_transfer_number_view; ?> </h2></div>
+					                <div class="box-content">
+					               <?php echo implode(", ",$arr_sel_serial_numer); ?>
+									 </div>
+				                    </div>
+								   <?php	
+								    }
+						         }
+						      ?>
 				
 			</div><!--/row-->
     <!-- content ends -->

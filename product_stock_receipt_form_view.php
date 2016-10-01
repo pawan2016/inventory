@@ -103,7 +103,12 @@
 	
 	$view_receipt_product=$view_data['product_receipt_product_detail'];
 	$access_level_status = $view_receipt_detail->access_level_status;
-
+    	if($access_level_status=='1'){
+		$aurthorized_condition ='Yes';
+		}else{
+			
+		$aurthorized_condition ='No';	
+	  }
 ?>
     <div class="row my-container-class viewPage">
         <div id="content" class="col-lg-12 col-sm-12">
@@ -380,12 +385,21 @@
 							<div class="form-group col-lg-2 showmyprint">
 								<label class="control-label">Remarks&nbsp;:&nbsp;</label>
 							</div>
+							<div class="form-group col-lg-2 showmyprint">
+								<label class="control-label">Authorized&nbsp;:&nbsp;</label><?php echo $aurthorized_condition; ?>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-lg-2 showmyprint">
+								<label class="control-label">Naration&nbsp;:&nbsp;</label>
+							</div>
+							
 						</div>
 					</div>
 				</div>
 				<div class="box col-lg-12 col-md-12 col-xs-12" style="min-height:300px !important;">
 					<div class="box-content">
-						<table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+						<table class="table table-striped table-bordered ">
 							<thead>
 								<tr>
 									<th class="text-center">Sr. No.</th>
@@ -397,56 +411,84 @@
 							<tbody>
 							<?php if(!empty($view_receipt_product)){
 									  $i=1;
-									  foreach ($view_receipt_product as $view_receipt_products ){?>
+									  $grand_total=0;
+									  $weight_total=0;
+									  foreach ($view_receipt_product as $view_receipt_products ){
+										  $grand_total += $view_receipt_products->stock_product_qty_received;
+									      $weight_total += ($view_receipt_products->stock_product_weight*$view_receipt_products->stock_product_qty_received);
+										  
+										  
+										  
+										  ?>
 								<tr>
 									<td class="text-center"><?php echo $i++;?></td>
 									<td class="center text-center"><?php echo $view_receipt_products->product_name;?></td>
 									<td class="center text-center"><?php echo $view_receipt_products->stock_product_weight*$view_receipt_products->stock_product_qty_received;?></td>
 									<td class="center text-center"><?php echo $view_receipt_products->stock_product_qty_received;?></td>
 								</tr>
-								  <?php }}?>
+								  <?php }?>
+								   <tr><td></td><td class="center text-center">Grand Total</td><td class="center text-center"><?php echo $weight_total;?></td><td class="center text-center"><?php echo $grand_total; ?></td></tr>
+								  
+								<?php  }?>
 							</tbody>
 						</table>
 					</div>
 				</div>
 				<div class="box col-lg-12 col-md-12 col-xs-12">
-					<div class="box-header well">
-						<h2>For MMTC LTD.</h2>
-					</div>
-					<br/>
+				<div class="box col-lg-6 col-md-6 col-xs-6">
+						</div>
+						<div class="box col-lg-6 col-md-6 col-xs-6">
+							<div class="box-header well">
+						   <h2>For MMTC LTD.</h2>
+					    </div> 
+						</div>
 					<div class="box-content">
 						<div class="row">
 							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Received By<?php echo str_repeat('&nbsp;',15) ?>:&nbsp;</label>.................................
+								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',15) ?>:&nbsp;</label>.................................
 							</div>
 							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Checked By<?php echo str_repeat('&nbsp;',16) ?>:&nbsp;</label>.................................
-							</div>
-						</div>
-						<div class="row">
-							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Name & Designation&nbsp;:&nbsp;</label>.................................
-							</div>
-							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Name & Designation&nbsp;:&nbsp;</label>.................................
+								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',16) ?>:&nbsp;</label>.................................
 							</div>
 						</div>
+					
 						<div class="row">
 							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',20) ?>:&nbsp;</label>.................................
+								<label class="control-label">Name & Designation&nbsp;:&nbsp;&nbsp;</label>.................................
 							</div>
 							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',20) ?>:&nbsp;</label>.................................
+								<label class="control-label">Name & Designation&nbsp;:&nbsp;&nbsp;</label>.................................
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="box col-lg-12 col-md-12 col-xs-12"  style="margin-top:10px !important;">
-					<div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">PACKING LIST </h2></div><div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">Receipt No.:<?php echo $product_stock_receipt_number_view; ?> </h2></div>
-					<div class="box-content">
-						<?php echo implode(", ",$arr_serial_number_view); ?>
-					</div>
-				</div>
+				<?php
+							if(!empty($view_receipt_product))
+							{
+							
+							foreach($view_receipt_product as $product_receipt)
+							{
+							?>				
+							<?php  $stock_receipt_product_serials_detail=$view_data['stock_receipt_product_serials_detail'][$product_receipt->stock_product_id]; ?>
+							
+									<?php
+									$arr_serial_number_view=array();
+									foreach($stock_receipt_product_serials_detail as $val_serials)
+									{
+										$arr_serial_number_view[]=$val_serials->stock_product_serial_number;
+								    
+								    }
+									?>
+								  <div class="box col-lg-12 col-md-12 col-xs-12" style="margin-top:10px !important;">
+					               <div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">PACKING LIST:&nbsp;&nbsp;<?php echo $product_receipt->product_name;?> </h2></div><div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">Receipt No:<?php echo $product_stock_receipt_number_view; ?> </h2></div>
+					                <div class="box-content">
+					               <?php echo implode(", ",$arr_serial_number_view); ?>
+									 </div>
+				                    </div>
+								   <?php	
+								    }
+						         }
+						      ?>
 				
 			</div><!--/row-->
     <!-- content ends -->

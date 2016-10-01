@@ -231,63 +231,6 @@ border: none;
            }
     }
 }
-
-$customerName = "";
-$customerAddress = "";
-$customerPhoneNo = "";
-$id_Number = ""; 
-
-if($invoiceDetails->customer_pan_number != '' )
-{
-	$id_Number = $invoiceDetails->customer_pan_number;
-}
-else if($invoiceDetails->customer_id_proof_number !='')
-{
-	$id_Number = $invoiceDetails->customer_id_proof_number;
-}
-else if($customerDetails->modal_customer_pan_number !='')
-{
-	$id_Number = $customerDetails->modal_customer_pan_number;
-}
-else{
-	$id_Number = $customerDetails->id_proof_number;
-}
-
-if($invoiceDetails->customer_name != '' )
-{
-	$customerName = $invoiceDetails->customer_name;
-}
-else if($customerDetails->modal_customer_name !='')
-{
-	$customerName = $customerDetails->modal_customer_name;
-}
-else{
-	$customerName = "N/A";
-}
-
-if($invoiceDetails->customer_address != '' )
-{
-	$customerAddress = $invoiceDetails->customer_address;
-}
-else if($customerDetails->modal_customer_address !='')
-{
-	$customerAddress = $customerDetails->modal_customer_address;
-}
-else{
-	$customerAddress = "N/A";
-}
-
-if($invoiceDetails->customer_phone_number != '' )
-{
-	$customerPhoneNo = $invoiceDetails->customer_phone_number;
-}
-else if($customerDetails->modal_customer_phone_number !='')
-{
-	$customerPhoneNo = $customerDetails->modal_customer_phone_number;
-}
-else{
-	$customerPhoneNo = "N/A";
-}
 	?>
    
 	<table align="center" width="100%"  class="print_page bgClass"><tr><td>
@@ -301,11 +244,11 @@ else{
 	<?php } ?>
 	<tr><td colspan="2"><table width="100%" class="class_table1">
 	
-
+	
 	<?php //echo $office_location->office_address; after office name; ?>
 	<tr><td width="50%" style="text-align:left;"><strong>मैं / M/s</strong> <?php echo ucwords($office_location->office_name.",<br/>".getCityName($office_location->city_id).", ".getDistrictName($office_location->district_id).", ".getStateName($office_location->state_id)); ?>
-	<br /><strong>टिन / Tin Number: </strong><?php echo $office_location->office_tin_number;?></td><td valign="top" width="50%" style="text-align:left;"><strong>बीजक सं / Invoice No.: </strong><span><?php echo ucwords($invoiceDetails->invoice_number); ?></span><br/><?php if($this->input->get('backdate')==1){ echo "<strong>दिनांक / Manual Invoice Date: </strong>";echo ucwords($invoiceDetails->invoice_date); }else{ echo "<strong>दिनांक /Invoice Date: </strong>"; /* $datatime = $invoiceDetails->invoice_date;$datetime = new DateTime($curr_date); $date = $datetime->format('d/m/Y'); echo $date; */ echo date('d/m/Y',strtotime($invoiceDetails->createdOn));} ?> <br></span><span><?php if($this->input->get('backdate')==1){ echo " <strong>दिनांक / Created Invoice Date: </strong>"; /*$curr_date = $invoiceDetails->createdOn; $datetime = new DateTime($curr_date); $date = $datetime->format('d/m/Y');*/ echo date('d/m/Y',strtotime($invoiceDetails->createdOn)); }else{ echo " "; }  ?> </span></td></tr>
-	<tr><td><span><strong>सेवा में / To</strong> <?php echo ucwords($customerName.",<br/>".$customerAddress.", ".getCityName($customerDetails->city_id).", ".getDistrictName($customerDetails->district_id).", ".getStateName($customerDetails->state_id)); echo "<br/>Phone No. ".$customerPhoneNo; ?></span></td><td valign="top" style="text-align:left;"><strong>ग्राहक का पैन/आई॰डी॰ सं <br/>Purchaser's PAN/ID No.: </strong><span><?php echo ucwords($id_Number); ?></span></td></tr>
+	<br /><strong>टिन / Tin Number: </strong><?php echo $office_location->office_tin_number;?><br/><strong>लेनदेन आईडी / Transaction Id: </strong><?php echo ucwords($invoiceDetails->customer_transaction_id);?></td><td valign="top" width="50%" style="text-align:left;"><strong>बीजक सं / Invoice No.: </strong><span><?php echo ucwords($invoiceDetails->invoice_number); ?></span><br/><?php if($this->input->get('backdate')==1){ echo "<strong>दिनांक / Manual Invoice Date: </strong>";echo ucwords($invoiceDetails->invoice_date); }else{ echo "<strong>दिनांक /Invoice Date: </strong>"; /* $datatime = $invoiceDetails->invoice_date;$datetime = new DateTime($curr_date); $date = $datetime->format('d/m/Y'); echo $date; */ echo date('d/m/Y',strtotime($invoiceDetails->createdOn));} ?> <br></span><span><?php if($this->input->get('backdate')==1){ echo " <strong>दिनांक / Created Invoice Date: </strong>"; /*$curr_date = $invoiceDetails->createdOn; $datetime = new DateTime($curr_date); $date = $datetime->format('d/m/Y');*/ echo date('d/m/Y',strtotime($invoiceDetails->createdOn)); }else{ echo " "; }  ?> </span></td></tr>
+	<tr><td><span><strong>सेवा में / To</strong> <?php echo ucwords($customerDetails->modal_customer_name.",<br/>".$customerDetails->modal_customer_address.", ".getCityName($customerDetails->city_id).", ".getDistrictName($customerDetails->district_id).", ".getStateName($customerDetails->state_id)); echo "<br/>Phone No. ".$customerDetails->modal_customer_phone_number; ?></span></td><td valign="top" style="text-align:left;"><strong>ग्राहक का पैन/आई॰डी॰ सं <br/>Purchaser's PAN/ID No.: </strong><span><?php $id_Number = ($customerDetails->modal_customer_pan_number !='') ? $customerDetails->modal_customer_pan_number : $customerDetails->id_proof_number; echo ucwords($id_Number); ?></span></td></tr>
 
 	</table></td></tr>
 	
@@ -331,7 +274,6 @@ else{
 								$totalVAT = 0;
 								$totalnetAmount = 0;
 								$totalEntryTax = 0;
-								$entryTax = 0;
 						foreach($productDetails as $product){
 							//echo "<pre>";
 							//print_r($product);die;
@@ -394,6 +336,7 @@ else{
 	<tr><th width="23%" style="text-align:left;">भुगतान का प्रकार <br>Payment Type</th>
 	<th width="22%" style="text-align:left;"> योग <br>Amount (Rs.)</th>
 	<th width="22%" style="text-align:left;">कार्ड धारक नाम <br>Name on Card</th>
+	<th width="22%" style="text-align:left;">जारीकर्ता बैंक <br>Issuing Bank</th>
 	<th width="55%" style="text-align:left;">विवरण <br>Payment Details</th>
 	</tr>
 	<?php $total_received_till=0;
@@ -403,17 +346,17 @@ else{
 	<tr><td><?php echo ucwords($payment_types->payment_type);?></td>
 	<td>Rs. <?php echo number_format($payment_types->payment_amount,2,'.',',');?></td>
 	<td> <?php echo ucwords($payment_types->bank_name);?></td>
+	<td><?php echo $payment_types->card_issuing_bank;?></td>
 	<td> <?php echo $payment_types->card_cheque_number;?></td>
 	</tr>
 	<?php 
 	}
 	?>
-	<tr><td colspan="4"><table width="100%" class="class_table1 class_table2" ><tr><td ><strong>भुगतान प्राप्त / Amount Received:</strong> &nbsp;&nbsp;Rs.&nbsp;<?php echo number_format($total_received_till,2,'.',','); ?></td><td></td></tr>
+	<tr><td colspan="5"><table width="100%" class="class_table1 class_table2" ><tr><td ><strong>भुगतान प्राप्त / Amount Received:</strong> &nbsp;&nbsp;Rs.&nbsp;<?php echo number_format($total_received_till,2,'.',','); ?></td><td></td></tr>
 	<?php if($invoiceDetails->invoice_type=='advance' || $invoiceDetails->invoice_type=='backdateadvance') {?>
 	<tr><td ><strong>बकाया राशि / Amount Pending:</strong> &nbsp;&nbsp;Rs.&nbsp;<?php $pending=$totalnetAmount+$invoiceDetails->surcharge_on_vat+$invoiceDetails->adjustment-$total_received_till; if($pending>=0) echo number_format($pending,2,'.',','); else{ echo "0.00";} ?></td><td></td></tr>
 	<?php } ?>
-	<tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td style="font-weight:bold;text-align:right;"> प्रविष्टि कर 
-प्रतिशत / Entry Tax (%):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;<?php echo number_format(($entryTax),2,'.',','); ?></td></tr><tr><td>&nbsp;</td><td style="font-weight:bold;text-align:right;"> प्रविष्टि कर / Entry Tax:&nbsp;&nbsp;&nbsp; Rs.&nbsp;&nbsp;&nbsp;<?php echo number_format(($totalEntryTax),2,'.',','); ?></td></tr><tr><td style="font-weight:bold;text-align:left">Amount Refunded:&nbsp;&nbsp;&nbsp;  Rs.&nbsp;&nbsp;&nbsp;<?php echo number_format(($invoiceDetails->amount_refunded),2,'.',','); ?></td><td style="font-weight:bold;text-align:right">टीसीएस भुगतान / TCS Amount&nbsp;&nbsp;&nbsp;  Rs.&nbsp;&nbsp;&nbsp;<?php echo number_format($invoiceDetails->surcharge_on_vat,2,'.',','); ?></td></tr>
+	<tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td style="font-weight:bold;text-align:right;"> प्रविष्टि कर / Entry Tax:&nbsp;&nbsp;&nbsp; Rs.&nbsp;&nbsp;&nbsp;<?php echo number_format(($totalEntryTax),2,'.',','); ?></td></tr><tr><td style="font-weight:bold;text-align:left">Amount Refunded:&nbsp;&nbsp;&nbsp;  Rs.&nbsp;&nbsp;&nbsp;<?php echo number_format(($invoiceDetails->amount_refunded),2,'.',','); ?></td><td style="font-weight:bold;text-align:right">टीसीएस भुगतान / TCS Amount&nbsp;&nbsp;&nbsp;  Rs.&nbsp;&nbsp;&nbsp;<?php echo number_format($invoiceDetails->surcharge_on_vat,2,'.',','); ?></td></tr>
 	<tr><td style="font-weight:bold;text-align:left">Adjustment:&nbsp;&nbsp;&nbsp;  Rs.&nbsp;&nbsp;&nbsp;<?php echo number_format(($invoiceDetails->adjustment),2,'.',','); ?></td><td style="font-weight:bold;text-align:right">कुल बिक्री मूल्य वेट के साथ / Total Sales Price with VAT:&nbsp;&nbsp;&nbsp;  Rs.&nbsp;&nbsp;&nbsp;<?php echo number_format(($totalnetAmount + $totalEntryTax+$invoiceDetails->surcharge_on_vat+$invoiceDetails->adjustment),2,'.',','); ?></td></tr></table></td></tr>
 	
 	</table></td></tr>	
@@ -424,7 +367,18 @@ else{
 	<?php } else { ?>
 	<tr><td colspan="4" style="text-align:right" class="noprint">&nbsp;<input type="button" class="noprint" value="Print" onClick="javascript:window.print();">&nbsp;<a type="button" class="noprint btn" href="<?php echo base_url('invoice/sales_invoice_form');?>"><button type="button">Back</button></a>&nbsp;<a type="button" class="noprint btn" href="<?php echo base_url('invoice/sales_invoice_details');?>"><button type="button">Show Invoices Detail</button></a></td></tr>
 	<?php } ?>
-	<tr><td style="text-align:left" >&nbsp;<lable>Printed By :   <?php  $user=$this->db->get_where('users_master',array('user_id'=>$product->creator_id))->row();	echo (ucwords($user->user_name)); ?></lable>&nbsp;&nbsp;, <lable>Date :   <?php echo date('d-m-Y H:i:s',strtotime($product->createdOn)); ?></lable>&nbsp;</td><td style="text-align:right" >&nbsp;<lable><?php if($invoiceDetails->is_deleted == '1'){ echo "Deleted"; } else{ echo ''; } ?></lable>&nbsp;</td></tr>
+	<tr><td style="text-align:left" >&nbsp;<lable>Printed By :   <?php  $user=$this->db->get_where('users_master',array('user_id'=>$product->creator_id))->row();	echo (ucwords($user->user_username)); ?></lable>&nbsp;&nbsp;, <lable>Printed on :   <?php echo date('d-m-Y H:i:s',strtotime($product->createdOn)); ?></lable>&nbsp;</td><td style="text-align:right" >&nbsp;<lable><?php if($invoiceDetails->is_deleted == '1'){ echo "Deleted"; } else{ echo ''; } ?></lable>&nbsp;</td></tr>
+	<?php if($invoiceDetails->is_deleted == '1') { 
+		if(!empty($product->deleted_date)){
+		$delete_date = date('d-m-Y H:i:s',strtotime($product->deleted_date));
+		}else{
+		$delete_date='';
+		 }
+		
+		?>
+	<tr><td style="text-align:left" >&nbsp;<lable>Deleted By :   <?php  $user=$this->db->get_where('users_master',array('user_id'=>$product->delete_by_user))->row();	echo (ucwords($user->user_username)); ?></lable>&nbsp;&nbsp;, <lable>Deleted on  :   <?php echo $delete_date; ?></lable>&nbsp;</td><td style="text-align:right" >&nbsp;</td></tr>
+	<?php } ?>
+	<!--<tr><td style="text-align:left" colspan="2" >&nbsp;<lable>Printed on : <?php echo date('d-m-Y H:i:s');?> </lable></td></tr>-->
 	</table>
 	
 	</td></tr>

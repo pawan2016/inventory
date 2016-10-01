@@ -152,6 +152,7 @@ if($check_super_admin["role_id"]==0 && $check_super_admin["office_id"]==0)
 											<th class="text-center" style="width:10%;">Payment Type</th>
 											<th class="text-center" style="width:15%;">Products: Qty</th>
 											<th class="text-center" style="width:13%;">Total Sales Price with TAX Rs.</th>
+											<th class="text-center" style="width:13%;">Narration</th>
 											<!--<th class="text-center">Office Name</th>-->
 											<th class="text-center action" style="width:7%;">Actions</th>
 										</tr>
@@ -185,8 +186,8 @@ if($check_super_admin["role_id"]==0 && $check_super_admin["office_id"]==0)
 											<td class="text-center mh3" style="<?php echo $style_deleted;?>"><?php echo $i++;?></td>
 											<td class="center text-center mh3" style="<?php echo $style_deleted;?>"><?php $arr_date=explode(" ",$InvoiceDetails->invoice_date); echo $arr_date[0];//date('m/d/Y',$arr_date[0]);?></td>
 											<td class="center text-center mh3" style="<?php echo $style_deleted;?>"><?php echo $InvoiceDetails->invoice_number;?></td>
-											<td class="center text-center mh3" style="<?php echo $style_deleted;?>"><?php if($InvoiceDetails->customer_pan_number !=''){ echo $InvoiceDetails->customer_pan_number;} else if($InvoiceDetails->modal_customer_pan_number!='') { echo $InvoiceDetails->modal_customer_pan_number; } else { echo 'N/A'; } ?></td>
-											<td class="center text-left mh3" style="<?php echo $style_deleted;?>"><?php if($InvoiceDetails->customer_name !=''){ echo $InvoiceDetails->customer_name;} else if($InvoiceDetails->modal_customer_name!='') { echo $InvoiceDetails->modal_customer_name; } else { echo 'N/A'; } ?></td>
+											<td class="center text-center mh3" style="<?php echo $style_deleted;?>"><?php if($InvoiceDetails->modal_customer_pan_number!='') { echo $InvoiceDetails->modal_customer_pan_number; } else { echo 'N/A'; } ?></td>
+											<td class="center text-left mh3" style="<?php echo $style_deleted;?>"><?php if($InvoiceDetails->modal_customer_name!='') { echo $InvoiceDetails->modal_customer_name; } else { echo 'N/A'; } ?></td>
 										
 											<td class="center text-center mh3" style="<?php echo $style_deleted;?>"><?php 
 											$arr_payment_type=$this->db->get_where('invoice_showroom_payment_mode_'.$this->session->userdata('office_id'),array('invoice_id'=>$InvoiceDetails->invoice_id))->result();
@@ -211,10 +212,12 @@ if($check_super_admin["role_id"]==0 && $check_super_admin["office_id"]==0)
 											
 												?>
 											</td>
-											<td class="center text-center mh3" style="<?php echo $style_deleted;?>"><?php echo number_format($InvoiceDetails->total_amount,2,'.',',');?></td>
+											<td class="center text-center mh3" style="<?php echo $style_deleted;?>"><?php echo number_format($InvoiceDetails->total_amount + $InvoiceDetails->adjustment,2,'.',',');?></td>
+											<td class="center text-center mh3" style="<?php echo $style_deleted;?>"><?php 
+											if($InvoiceDetails->showrom_invoice_narrative=='') { echo "N/A"; } else { echo$InvoiceDetails->showrom_invoice_narrative; } ?></td>
 											<td class="center text-center action mh3" style="<?php echo $style_deleted;?>">
 											<?php if($view_value == "3"){ ?>
-												<a class="btn btn-info my-btn-class" href="<?php echo base_url('invoice/sales_invoice_receipt?invoice_id='.base64_encode($InvoiceDetails->invoice_id));?>" title="View">
+												<a class="btn btn-info my-btn-class" href="<?php echo base_url('invoice/sales_invoice_receipt?invoice_id='.base64_encode($InvoiceDetails->invoice_id));?>" target="_blank" title="View">
 													<i class="glyphicon glyphicon-view icon-white"></i>
 													View
 												</a>

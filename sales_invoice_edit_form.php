@@ -179,7 +179,7 @@ $serialMaster = $this->db->select('in_p_sn.serial_number as serial_number')->fro
 									<input type="text" class="form-control" id="price_rate-<?php echo $i;?>" maxlength="6" value="<?php echo $inv_pro->rate; ?>"  name="rate_per_quantity[]" readonly />
 								</div>
 								<div class="form-group col-lg-1">
-									<input readonly type="text" class="form-control" name="discount_percent[]" id="discount_percent-<?php echo $i;?>" value="<?php echo $inv_pro->discount; ?>" readonly="" />
+									<input readonly type="text" class="form-control" name="discount_percent[]" id="discount_percent-<?php echo $i;?>" value="<?php echo $inv_pro->discount; ?>"  readonly="" />
 								</div>
 								<div class="form-group col-lg-1">
 									<input type="text" class="form-control" id="tax-<?php echo $i;?>" name="tax[]" readonly value="<?php echo $inv_pro->tax; ?>" />
@@ -1271,6 +1271,7 @@ function removeNewRawSalesInvoice(div_id)
 
 		$('#sales_invoice_payment_mode-'+div_id+' input').val('');
 		$('#sales_invoice_payment_mode-'+div_id).html('');
+		unselectpayment_mode('payment_mode-'+div_id,div_id);
 		getTotal_received();
 	}
 function resetErrors() {
