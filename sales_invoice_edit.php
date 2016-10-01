@@ -5,6 +5,14 @@
 .col-lg-1 {
     width: 7%;}
 	.my-serial-number-class.chosen-container{width:165px !important;}
+	.col-lg-3
+{
+	padding-right:0px !important;
+}
+.col-lg-2
+{
+	padding-right:0px !important;
+}
 </style>
 <div class="ch-container">
     <div class="row my-container-class">
@@ -32,29 +40,41 @@
 						</div>
 						<div class="box-content">
 							<form method="post" action="<?php echo base_url('invoice/saveInvoiceData'); ?>" id="form_sales_invoice" onsubmit="return checkInvoiceForm();">
-							<div class="row">
-								<div class="form-group col-lg-4">
+							<div class="row" style="width:100%;">
+								<div class="form-group col-lg-3">
 									<label class="control-label">Date</label>
 									<input type="text" class="form-control" id="sales_invoice_date" name="invoice_date" readonly="" value="<?php echo $invoice_details->invoice_date;?>"/>
 								</div>
-								<div class="form-group col-lg-4">
+								<div class="form-group col-lg-3">
 									<label class="control-label">Type of Invoice</label>
 									<div class="controls">
-										<select  data-rel="chosen" style="width:50% !important;" disabled="disabled">
+										<select  data-rel="chosen" style="width:40% !important;" disabled="disabled">
 											<option value="advance">Advance Mode</option>
 										</select><input type="hidden" id="invoice_type"  name="invoice_type" value="advance" />
 									</div>
 								</div>
 								
-								<div class="form-group col-lg-4">
+								<div class="form-group col-lg-3">
 									<label class="control-label">Invoice Number</label>
 									<div class="clear-fix"></div>
 									<span id="show_invoice_number" class="label label-info"></span>
 									<input type="text" class="form-control" id="invoice_number" name="invoice_number" readonly="" value="<?php echo $invoice_details->invoice_number;?>" />
-								</div> 
+								</div>
+								
+									<div class="form-group col-lg-3" style="width:300px;">
+									<label class="control-label">Narration</label>
+									<div class="clear-fix"></div>
+									<span id="" class="label label-info"></span>
+									<input type="text" class="form-control" readonly="" value="<?php echo $invoice_details->showrom_invoice_narrative ?>" id="narrative" name="showrom_invoice_narrative"/>
+								</div>  
 							</div>
-							
 							<div class="row">
+								<div class="form-group col-lg-3">
+									<label class="control-label">Transaction Id</label>
+									<input type="text" class="form-control" id="customer_transaction_id" name="customer_transaction_id" maxlength="50" style="text-transform:uppercase" readonly="" value="<?php echo $invoice_details->customer_transaction_id ?>" onkeyup="transaction_validation(this.value);" />
+								</div>
+							 </div>
+							<div class="row" style="width:100%;">
 								<div class="form-group col-lg-3">
 									<label class="control-label">Phone</label>
 									<input type="text" class="form-control" id="customer_phone_number" name="customer_phone_number" readonly="" value="<?php echo $invoice_details->modal_customer_phone_number;?>"/>
@@ -103,7 +123,12 @@
 									<label class="control-label">ID Number</label>
 									<input type="text" class="form-control" id="id_proof_number" name="id_proof_number"  value="<?php echo $invoice_details->id_proof_number;?>" />
 								</div>
-								
+								<!--<div class="form-group col-lg-3">
+									<label class="control-label">Narration</label>
+									<div class="clear-fix"></div>
+									<span id="" class="label label-info"></span>
+									<textarea class="form-control" id="narrative" name="showrom_invoice_narrative" /><?php //echo $invoice_details->showrom_invoice_narrative;?></textarea>
+								</div> -->
 							</div>							
 							<hr/>
 							<div class="row">
@@ -169,7 +194,7 @@
 									<input type="text" class="form-control" id="price_rate-<?php echo $i;?>" maxlength="6" value="<?php echo $inv_pro->rate; ?>"  name="rate_per_quantity[]" readonly />
 								</div>
 								<div class="form-group col-lg-1">
-									<input type="text" class="form-control" name="discount_percent[]" id="discount_percent-<?php echo $i;?>" value="<?php echo $inv_pro->discount; ?>"  readonly="" />
+									<input type="text" class="form-control" name="discount_percent[]" id="discount_percent-<?php echo $i;?>" value="<?php echo $inv_pro->discount; ?>" readonly=""  />
 								</div>
 								<div class="form-group col-lg-1">
 									<input type="text" class="form-control" id="tax-<?php echo $i;?>" name="tax[]" readonly value="<?php echo $inv_pro->tax; ?>" />
@@ -207,7 +232,7 @@
 							<?php
 							$i=0;
 							$payment_received=0;
-							
+							$flag_show_round=0;
 							foreach($invoice_payment as $ipayment)
 							{
 								if($i==0)
@@ -221,11 +246,11 @@
 								
 							
 							<div class="row form-group col-lg-12 " style="padding:0;" id="sales_invoice_payment_mode-<?php echo $i;?>">
-								<div class="form-group col-lg-3" style="padding:0">
+								<div class="form-group col-lg-2" style="padding:0">
 									
-									<label class="control-label">Payment Mode :</label>
+									<label class="control-label">Payment Mode</label>
 									<div id="payment_div_id_<?php echo $i;?>">
-									<?php if($ipayment->payment_type=='cash') { echo "Cash";}
+									<?php if($ipayment->payment_type=='cash') { $flag_show_round=1; echo "Cash";}
 										elseif($ipayment->payment_type=='credit card') { echo "Credit Card";}
 										elseif($ipayment->payment_type=='debit card') { echo "Debit Card";}
 										elseif($ipayment->payment_type=='cheque') { echo "Cheque";}
@@ -241,7 +266,7 @@
 										</div>
 									</div>
 								
-								<div class="form-group col-lg-3">
+								<div class="form-group col-lg-2">
 									<label class="control-label">Amount (Rs.) </label>
 									<br/><?php echo $ipayment->payment_amount; /*?>
 									<input type="text" class="form-control" name="payment_mode_amount[]" id="payment_mode_amount_<?php echo $i;?>" onchange="getTotal_received();" value="<?php echo $ipayment->payment_amount;?>"  /> <?php */?>
@@ -252,7 +277,7 @@
 									
 								
 								<div class="form-group col-lg-3" id="div_card_data_<?php echo $i;?>" style="display:block;">
-									<label class="control-label" id="lable_card_<?php echo $i;?>"><?php if($ipayment->payment_type=='cheque'){echo "Cheque No.";}elseif(($ipayment->payment_type=='credit card') || ($ipayment->payment_type=='debit card')){ echo "Card No."; }elseif($ipayment->payment_type=='neft'){ echo "NEFT Details";} ?></label>
+									<label class="control-label" id="lable_card_<?php echo $i;?>"><?php if($ipayment->payment_type=='cheque'){echo "Cheque No. & Date";}elseif(($ipayment->payment_type=='credit card') || ($ipayment->payment_type=='debit card')){ echo "Card No."; }elseif($ipayment->payment_type=='neft'){ echo "NEFT Details";}?></label>
 									<br/><?php echo $ipayment->card_cheque_number;?>
 								</div>
 								
@@ -265,10 +290,20 @@
 									
 								
 								<div class="form-group col-lg-3" id="div_card_name_<?php echo $i;?>" style="display:block;">
-									<label class="control-label" id="lable_card_name_<?php echo $i;?>">Card Name</label>
-									<br/><?php echo $ipayment->bank_name;?>
+								<label class="control-label" id="lable_card_name_<?php echo $i;?>">Name on Card</label>
+								<br/><?php echo $ipayment->bank_name;?>
 								</div>
 								
+								<?php
+								}
+								?>
+									<?php if($ipayment->card_issuing_bank!='')
+								     {
+									?>
+								<div class="form-group col-lg-2" id="div_issuing_bank_<?php echo $i;?>" style="display:block;">
+									<label class="control-label" id="lable_issuing_bank_<?php echo $i;?>">Issu. Bank</label>
+									<br/><?php echo $ipayment->card_issuing_bank;?>
+								</div>
 								<?php
 								}
 								?>
@@ -276,11 +311,12 @@
 								if($ipayment->payment_type=='cheque')
 								{ ?>
 							<div class="form-group col-lg-3" id="div_cheque_relese_<?php echo $i;?>" style="display:block;">
-									<label class="control-label">Cheque Release</label>
+									<label class="control-label">Cheq. Realization (Y/N)</label>
 										<select id="cheque_relese_<?php echo $i;?>" name="cheque_relese[]"  class="form-control"  >
+										<option <?php if($ipayment->cheque_release=='select') echo "selected"; ?> value="select">--Select--</option>
 										<option <?php if($ipayment->cheque_release==0) echo "selected"; ?> value="0">No</option>
 										<option  <?php if($ipayment->cheque_release==1) echo "selected"; ?> value="1">Yes</option>
-										</select>
+										</select> 
 										</div>
 										<input type="hidden" class="form-control" name="invoice_payment_id[]" id="invoice_payment_id<?php echo $i;?>" value="<?php echo $ipayment->invoice_payment_id; ?>"  />
 										<input type="hidden" class="form-control" name="payment_mode_hidden[]" id="payment_mode_hidden<?php echo $i;?>" value="<?php echo $ipayment->payment_type;?>"  />
@@ -292,6 +328,7 @@
 							<?php
 							$i++;
 							}
+							
 							if(count($arr_payment_modes)>0)
 {
 	$str_payments=implode(",",$arr_payment_modes);
@@ -308,15 +345,6 @@
 								</div>
 							</div>
 							<div class="form-group col-lg-5" style="padding:0px;">
-								<div class="row form-group col-lg-12" >
-									
-									<div class="form-group col-lg-6">
-										<label class="control-label pull-right" style=" margin-top: 10px;">Entry Tax (%)</label>
-									</div>
-									<div class="form-group col-lg-6">
-										<input type="text" class="form-control" name="entry_tax_view" id="entry_tax_view" readonly value="<?php echo $invoice_products[0]->entry_tax; ?>" />
-									</div>
-								</div>
 								<div class="row form-group col-lg-12" >
 									
 									<div class="form-group col-lg-6">
@@ -375,8 +403,14 @@
 									<input type="text" readonly class="form-control" name="received_amount" id="received_amount" onkeypress="getAmountReceived();" value="<?php echo $payment_received; ?>" />
 								</div>
 								<div class="form-group col-lg-2 col-lg-push-1">
-									<label class="control-label">Adjustment (Rs.):</label>
-									<input type="text" class="form-control" value="<?php echo $invoice_details->adjustment; ?>"   name="round_off" id="round_off" onblur="round();" />
+								<?php
+								if($flag_show_round==0)
+								{
+									$style_round="display:none;";
+								}
+								?>
+									<label class="control-label" id="label_round_off" style="<?php echo $style_round;?>" >Adjustment (Rs.):</label>
+									<input type="text" class="form-control" value="<?php echo $invoice_details->adjustment; ?>"   name="round_off" id="round_off" onblur="round();" style="<?php echo $style_round;?>" />
 								</div>
 								
 								<div class="form-group col-lg-3 col-lg-push-3">
@@ -797,7 +831,7 @@ netAmount = parseFloat($("#total_net_amount").val());
 				mydata = JSON.parse(res);
 				
 					$('#price_rate-' + divnumber).val(mydata.price_rate.trim());
-					$('#entry_tax, #entry_tax_view').val(mydata.entry_tax.trim());
+					$('#entry_tax').val(mydata.entry_tax.trim());
 					$('#tax-' + divnumber).val(mydata.tax.trim());
 					//$('#surcharge_on_vat').val(mydata.surcharge.trim());
 					$('#qty_current_stock-'+net_stock_id).val(mydata.product_current_stock);
@@ -812,27 +846,64 @@ netAmount = parseFloat($("#total_net_amount").val());
 	function getcheckcard(id,divnumber)
 	{
 	var payment_mode=$('#'+id+' :selected').val();
-
+    $("#card_check_number_"+divnumber).attr("placeholder", "");
+	
+	 var divSize = $(".add_payment_mode > div").size();
+		var pass_hidden='';
+		var counter_pay='0';
+		var flag_show_rounfoff='0';
+		var flag_show_rounfoff_code='<?php echo $flag_show_round;?>';
+		for(var i=0;i<=divSize;i++)
+		{
+			
+		if($("#sales_invoice_payment_mode-"+i).html()!='')
+			{
+				payment_value_sel = $('#payment_mode-'+i+' :selected').val();
+				if(payment_value_sel=='cash')
+				{
+					flag_show_rounfoff=1;
+				}
+			}
+			
+		}
+		if(flag_show_rounfoff==1 || flag_show_rounfoff_code==1)
+		 {
+			 $("#round_off").show();
+			 $("#label_round_off").show();
+		 }
+		else
+		{
+			$("#round_off").val('');
+			$("#round_off").hide();
+			$("#label_round_off").hide();
+		}
+		 round();
+	
 		if(payment_mode=='credit card' || payment_mode=='debit card')
 		{
+		
 		$("#div_card_data_"+divnumber).show();
 		$("#div_card_name_"+divnumber).show();
 		$("#div_cheque_relese_"+divnumber).hide();
 		$("#lable_card_"+divnumber).html('Card No.');
 		$('#card_check_number_'+divnumber).val('');
 		$('#card_check_number_'+divnumber).attr('maxlength','4');
+		$("#div_issuing_bank_"+divnumber).val('');
+		$("#div_issuing_bank_"+divnumber).show('');
 		}
 		else if(payment_mode=='cheque' || payment_mode=='neft')
 		{
 		$("#div_card_data_"+divnumber).show();
+		$("#div_issuing_bank_"+divnumber).show('');
 		$("#div_card_name_"+divnumber).hide();
 		if(payment_mode=='cheque')
-		{
+		{    $("#div_issuing_bank_"+divnumber).show('');
 			$("#div_cheque_relese_"+divnumber).show();
-			$("#lable_card_"+divnumber).html('Cheque Number');
+			$("#lable_card_"+divnumber).html('Cheque No. & Date');
+			$("#card_check_number_"+divnumber).attr("placeholder", "123456/MM-DD-YYYY");
 		}
 		else{
-			
+			//$("#div_issuing_bank_"+divnumber).hide('');
 			$("#lable_card_"+divnumber).html('NEFT Details');
 			$("#div_cheque_relese_"+divnumber).hide();
 		}
@@ -1284,7 +1355,7 @@ netAmount = parseFloat($("#total_net_amount").val());
 		payment_id = $('#'+id+' :selected').val();
 		for(var k=$("#already_paid").val();k<=divSize;k++)
 		{
-			if(k!=cur_div && $("#sales_invoice_payment_mode-"+i).html()!='')
+			if(k!=cur_div && $("#sales_invoice_payment_mode-"+k).html()!='')
 			{
 			others_product_val = $('#payment_mode-'+k+' :selected').val();
 				
@@ -1297,6 +1368,32 @@ netAmount = parseFloat($("#total_net_amount").val());
 				
 							$('#payment_div_id_'+arr_res[1]).html(arr_res[2]);
 							
+					}
+					});
+				
+			}
+		}
+		
+	}
+		function unselectpayment_mode_remove()
+	{
+	updateSelectedPaymentHidden();
+		var divSize = $(".add_payment_mode > div").size()+parseInt($("#already_paid").val())-1;
+		var already_products = $("#selected_payment_val").val();
+		
+		for(var k=$("#already_paid").val();k<=divSize;k++)
+		{
+			if($("#sales_invoice_payment_mode-"+k).html()!='')
+			{
+			others_product_val = $('#payment_mode-'+k+' :selected').val();
+				
+					$.ajax({
+					url : "<?php echo base_url();?>invoice/AjaxAddNewDivCommon",
+					type: "POST",
+					data: {divSize:k,select_product:others_product_val,already_products:already_products,pageName:"sales_invoice_change_payment_type"},
+					success: function(res){
+					var arr_res=res.split('|||');
+					$('#payment_div_id_'+arr_res[1]).html(arr_res[2]);		
 					}
 					});
 				

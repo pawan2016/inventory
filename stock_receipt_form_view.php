@@ -87,24 +87,34 @@
 if($view_page=='1')
 {
 
-
 	$view_receipt_detail=$view_data['stock_receipt_detail'];
-
+        // echo "<pre>";
+ // print_r($view_receipt_detail);die;
 	$stock_transfer_number_view=$view_receipt_detail->stock_transfer_number;
 	$stock_receipt_date_view=$view_receipt_detail->stock_receipt_date;
 	//$transfer_office_data=$this->db->get_where('office_master',array('office_id'=>$view_receipt_detail->office_id))->row();
+	
+	$this->db->select('office_master.*,regional_store_master.regional_store_type')->from('office_master');
+	$this->db->join('regional_store_master','office_master.regional_store_id = regional_store_master.regional_store_id');
 	$this->db->where('office_id',$view_receipt_detail->stock_receipt_from);
-	$this->db->select('office_master.*,regional_store_master.regional_store_type')->from('office_master,regional_store_master');
+	
 	$transfer_office_data=$this->db->get()->row();
 
-	$this->db->join('regional_store_master','office_master.regional_store_id = regional_store_master.regional_store_id');
-	$received_from_view=$transfer_office_data->office_name.'-'.$transfer_office_data->office_operation_type.'('.$transfer_office_data->regional_store_type.')';
-
+	
+	$received_from_view = $transfer_office_data->office_name.'-'.$transfer_office_data->office_operation_type.'('.$transfer_office_data->regional_store_type.')';
 	$stock_transfer_date_view=$view_receipt_detail->stock_transfer_date;
 	$stock_receipt_number_view=$view_receipt_detail->stock_receipt_number;
+	$narration=$view_receipt_detail->narration;
 
 	$view_receipt_product=$view_data['stock_receipt_product_detail'];
 	$access_level_status = $view_receipt_detail->access_level_status;
+	if($access_level_status=='1'){
+		$invoice_authorized ='Yes';
+		
+		}else{
+			
+		$invoice_authorized ='No';	
+	}
 	
 }
 ?>
@@ -250,7 +260,7 @@ if($view_page=='1')
 									
 									foreach($stock_receipt_product_serials_detail as $val_serials)
 									{
-										$arr_serial_number_view[]=$val_serials->serial_number;
+										$arr_serial_number_view[] = $val_serials->serial_number;
 									?>
 									<option selected="selected"><?php echo $val_serials->serial_number;?></option>
 									<?php
@@ -265,23 +275,41 @@ if($view_page=='1')
 										</div>
 									</div>
 										<?php
-									}
-										}
+									}?>
+									
+									<div class="row">
+										<div class="form-group col-lg-6">
+												<label class="control-label">Is the transfer complete?</label>
+												<input data-no-uniform="true" id="stock_transferStatus_checked" type="checkbox" class="iphone-toggle">
+												<?php if($view_receipt_detail->stock_transfer_status == '1'){ ?>
+													<input type="hidden" name="stock_transferStatus" id="stock_transferStatus" value="Yes"  checked>
+												<?php } else{ ?>
+													<input type="hidden" name="stock_transferStatus" id="stock_transferStatus" value="No"  checked>
+												<?php }?>
+												
+											  </div>
+										  </div>
+										   <div class="row">
+											<div class="form-group col-lg-8" style="visibility:visible;" id="show_closing">
+											<label class="control-label required">Narration</label>
+											<textarea class="form-control" readonly="" id="narration_recipt" name="narration_recipt" style="resize:none; width:500px" ><?php echo $view_receipt_detail->narration; ?></textarea>
+											</div>
+									   </div>
+										<?php }
 										else
 										{
 										?>
 										
 										<div class="add_product_stock_receipt_received">
-							
 							            </div>
 										<div id="show_hide">
-										<div class="row">
+										<!--<div class="row">
 											<div class="form-group col-lg-6">
 												<label class="control-label">Is the transfer complete? </label>
 												<input data-no-uniform="true" id="stock_transferStatus_checked" type="checkbox" class="iphone-toggle">
 												<input type="hidden" name="stock_transferStatus" id="stock_transferStatus" value="No">
 											</div>
-										</div>
+										</div>-->
 										<div class="row">
 											<div class="form-group col-lg-6">
 												<button type="submit" class="btn btn-primary">Submit</button>
@@ -326,7 +354,8 @@ if($view_page=='1')
 								<tbody>
 							<?php 
 								// print_r($view_receipt_product);
-								if(!empty($view_receipt_product)){$i=1; foreach($view_receipt_product as $Summary_of_order_received){?>
+								if(!empty($view_receipt_product)){$i=1; 
+									foreach($view_receipt_product as $Summary_of_order_received){?>
 									<tr>
 										<td class="text-center"><?php echo $i++;?></td>
 										<td class="center text-center"><?php echo $Summary_of_order_received->product_name;?></td>
@@ -384,7 +413,13 @@ if($view_page=='1')
 								<label class="control-label">Received From&nbsp;:&nbsp;</label><?php echo $received_from_view; ?>
 							</div>
 							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Received At&nbsp;&nbsp;&nbsp;:&nbsp;</label><?php echo getOfficeLocation($office_id); ?>
+								<label class="control-label">Received At&nbsp;:&nbsp;</label><?php 
+									$this->db->select('office_master.*,regional_store_master.regional_store_type')->from('office_master');
+										$this->db->join('regional_store_master','office_master.regional_store_id = regional_store_master.regional_store_id');
+										$this->db->where('office_id',$office_id);
+										
+										$received_at_office_data=$this->db->get()->row();
+										echo getOfficeLocation($office_id).'('.$received_at_office_data->regional_store_type.')'; ?>
 							</div>
 						</div>
 						<div class="row">
@@ -396,15 +431,23 @@ if($view_page=='1')
 							</div>
 						</div>
 						<div class="row">
-							<div class="form-group col-lg-2 showmyprint">
+							<!--<div class="form-group col-lg-2 showmyprint">
 								<label class="control-label">Remarks&nbsp;:&nbsp;</label>
+							</div>-->
+							<div class="form-group col-lg-2 showmyprint">
+								<label class="control-label">Authorized&nbsp;:&nbsp;</label><?php echo $invoice_authorized; ?>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-lg-2 showmyprint">
+								<label class="control-label">Narration&nbsp;:&nbsp;</label><?php echo $narration;  ?>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="box col-lg-12 col-md-12 col-xs-12" style="min-height:300px !important;">
 					<div class="box-content">
-						<table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+						<table class="table  table-bordered">
 							<thead>
 								<tr>
 									<th class="text-center">Sr. No.</th>
@@ -418,7 +461,30 @@ if($view_page=='1')
 							<tbody>
 							<?php 
 								// print_r($view_receipt_product);
-								if(!empty($view_receipt_product)){$i=1; foreach($view_receipt_product as $Summary_of_order_received){?>
+								if(!empty($view_receipt_product)){$i=1;
+									$grand_total=0;
+									 $weight_total=0;
+									 $grand_total_transfer=0;
+									 $grand_total_stock_received=0;
+									 $grand_stock_received=0;
+									
+									 foreach($view_receipt_product as $Summary_of_order_received){
+										 $grand_total += $Summary_of_order_received->stock_pending;
+										 $grand_total_transfer += $Summary_of_order_received->stock_transferred;
+										 
+										 if(!empty($Summary_of_order_received->total_stock_received))
+										 {
+											   $grand_total_stock_received += $Summary_of_order_received->total_stock_received;
+										 }
+										if(!empty($Summary_of_order_received->stock_received))
+										{
+											   $grand_stock_received += $Summary_of_order_received->stock_received;
+										}
+										 
+										 
+										$grand_total_weight += $Summary_of_order_received->product_weight*$Summary_of_order_received->total_stock_received;
+										 
+										 ?>
 									<tr>
 										<td class="text-center"><?php echo $i++;?></td>
 										<td class="center text-center"><?php echo $Summary_of_order_received->product_name;?></td>
@@ -427,23 +493,34 @@ if($view_page=='1')
 										<td class="center text-center"><?php echo (!empty($Summary_of_order_received->total_stock_received) ? $Summary_of_order_received->total_stock_received : '0').'/'.(!empty($Summary_of_order_received->stock_received) ? $Summary_of_order_received->stock_received : '0');?></td>
 										<td class="center text-center"><?php echo $Summary_of_order_received->stock_pending;?></td>
 									</tr>
-							<?php } } ?>
+							<?php }  ?>
+							 <tr><td></td><td class="center text-center">Grand Total</td><td class="center text-center"><?php echo $grand_total_weight;?></td><td class="center text-center"><?php echo $grand_total_transfer;?></td><td class="center text-center"><?php echo $grand_total_stock_received.'/'.$grand_stock_received;?></td><td class="center text-center"><?php echo $grand_total; ?></td></tr>
+							 <?php } ?>
 							</tbody>
 						</table>
 					</div>
 				</div>
 				<div class="box col-lg-12 col-md-12 col-xs-12">
+					<div class="box col-lg-6 col-md-6 col-xs-6">
+					<div class="box-header well">
+					
+					</div>
+					</div>
+					
+					<div class="box col-lg-6 col-md-6 col-xs-6">
 					<div class="box-header well">
 						<h2>For MMTC LTD.</h2>
 					</div>
 					<br/>
+					</div>
+					
 					<div class="box-content">
 						<div class="row">
 							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Received By<?php echo str_repeat('&nbsp;',15) ?>:&nbsp;</label>.................................
+								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',20) ?>:&nbsp;</label>.................................
 							</div>
 							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Checked By<?php echo str_repeat('&nbsp;',16) ?>:&nbsp;</label>.................................
+								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',20) ?>:&nbsp;</label>.................................
 							</div>
 						</div>
 						<div class="row">
@@ -454,22 +531,35 @@ if($view_page=='1')
 								<label class="control-label">Name & Designation&nbsp;:&nbsp;</label>.................................
 							</div>
 						</div>
-						<div class="row">
-							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',20) ?>:&nbsp;</label>.................................
-							</div>
-							<div class="form-group col-lg-2 showmyprint">
-								<label class="control-label">Signature<?php echo str_repeat('&nbsp;',20) ?>:&nbsp;</label>.................................
-							</div>
-						</div>
-					</div>
 				</div>
 				<div class="box col-lg-12 col-md-12 col-xs-12" style="margin-top:10px;">
-					<div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">PACKING LIST </h2></div><div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">Receipt No.:<?php echo $stock_receipt_number_view; ?> </h2></div>
-					<div class="box-content">
-						<?php echo implode(", ",$arr_serial_number_view); ?>
-					</div>
-				</div>
+					    <?php
+							
+							if(!empty($view_receipt_product))
+							{
+							foreach($view_receipt_product as $product_receipt)
+							{
+							?>				
+							    <?php 	
+							    $stock_receipt_product_serials_detail=$view_data['stock_receipt_product_serials_detail'][$product_receipt->stock_receipt_product_id];?>
+								<?php
+									$arr_serial_number_view=array();
+									foreach($stock_receipt_product_serials_detail as $val_serials)
+									{
+										$arr_serial_number_view[] = $val_serials->serial_number;
+								    
+								    }
+									?>
+								  <div class="box col-lg-12 col-md-12 col-xs-12" style="margin-top:10px !important;">
+					               <div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">PACKING LIST:&nbsp;&nbsp;<?php echo $product_receipt->product_name;?> </h2></div><div class="col-lg-6 col-md-6 col-xs-6 my-heading-class"><h2 style="font-size:15px !important;">Receipt No:<?php echo $stock_receipt_number_view; ?> </h2></div>
+					                <div class="box-content">
+					               <?php echo implode(", ",$arr_serial_number_view); ?>
+									 </div>
+				                    </div>
+								   <?php	
+								    }
+						         }
+						      ?>
 				
 			</div><!--/row-->
     <!-- content ends -->
@@ -489,19 +579,32 @@ if($view_page=='1')
 			   
 			 if(data==true){
 				 
-				$('#stock_transferStatus').val('Yes'); 
+			  $('#stock_transferStatus').val('Yes'); 
+              $('#show_closing').removeAttr('style').css('visibility','hidden');		 
 				 
 			 }
 			 
 			if(data==false){
 				
 				$('#stock_transferStatus').val('No'); 
-				
+                $('#show_closing').removeAttr('style').css('visibility','visible');	
 			}			 
 			   
 		   }
 		 
 		 }
+
+		 var check_show_hide = '<?php echo $view_receipt_detail->stock_transfer_status; ?>';
+		 if(check_show_hide=='1'){
+			 $('#stock_transferStatus').val('Yes'); 
+			 $('#stock_transferStatus_checked').attr("checked",true);
+             $('#show_closing').removeAttr('style').css('visibility','hidden');	 
+			 
+		 }else{
+			$('#stock_transferStatus').val('No'); 
+            $('#show_closing').removeAttr('style').css('visibility','visible');	  
+		 } 
+
 		// $('#stock_receipt_date').datepicker({
 			// minDate:0,
 			// maxDate:0

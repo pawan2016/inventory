@@ -5,6 +5,14 @@
 .col-lg-1 {
     width: 7%;}
 .my-serial-number-class.chosen-container{width:165px !important;}
+.col-lg-3
+{
+	padding-right:0px !important;
+}
+.col-lg-2
+{
+	padding-right:0px !important;
+}
 </style>
 <div class="ch-container">
     <div class="row my-container-class">
@@ -33,15 +41,15 @@
 						<div class="box-content">
 							<!--<form method="post" action="<?php //echo base_url('invoice/saveInvoiceData'); ?>" id="form_sales_invoice" onsubmit="return checkInvoiceForm();">-->
 							<form method="post" action="<?php echo base_url('invoice/saveInvoiceData'); ?>" id="form_sales_invoice" onsubmit="return checkInvoiceForm();">
-							<div class="row">
-								<div class="form-group col-lg-4">
+							<div class="row" style="width:100%">
+								<div class="form-group col-lg-3">
 									<label class="control-label">Date</label>
 									<input type="text" readonly class="form-control" id="sales_invoice_date" name="invoice_date" value="<?php echo date('d/m/Y H:i:s');?>"/>
 								</div>
-								<div class="form-group col-lg-4">
+								<div class="form-group col-lg-3">
 									<label class="control-label">Type of Invoice</label>
 									<div class="controls">
-										<select id="invoice_type"  name="invoice_type" data-rel="chosen" style="width:50% !important;">
+										<select id="invoice_type"  name="invoice_type" data-rel="chosen">
 											<option value="sale">Sale</option>
 										<!--	<option value="credit">Credit</option>
 											<option value="proforma">Proforma</option>
@@ -50,16 +58,20 @@
 										</select>
 									</div>
 								</div>
-								<!--
-								<div class="form-group col-lg-4">
-									<label class="control-label">Invoice Number</label>
+								
+								<div class="form-group col-lg-3">
+									<label class="control-label">Narration</label>
 									<div class="clear-fix"></div>
-									<span id="show_invoice_number" class="label label-info"></span>
-									<input type="hidden" class="form-control" id="invoice_number" name="invoice_number"/>
-								</div> -->
+									<span id="" class="label label-info"></span>
+									<input type="text" class="form-control" id="narrative" name="showrom_invoice_narrative"/>
+								</div>
+								<div class="form-group col-lg-3">
+									<label class="control-label">Transaction Id</label>
+									<input type="text" class="form-control" id="customer_transaction_id" name="customer_transaction_id" maxlength="50" style="text-transform:uppercase" onkeyup="transaction_validation(this.value);" />
+								</div> 
 							</div>
 							<input type="hidden" name="entry_tax" id="entry_tax" />
-							<div class="row">
+							<div class="row" style="width:100%">
 								<div class="form-group col-lg-3">
 									<label class="control-label">Phone / Mobile<i class="glyphicon glyphicon-search"></i></label>
 									<input type="text" class="form-control" id="customer_phone_number" name="customer_phone_number"/>
@@ -197,6 +209,7 @@
 							<div class="row" id="sales_invoice-0">
 								<div class="form-group col-lg-2">
 									<div class="controls" id="product_div_id_0">
+									
 										<select id="product_id-0" name="product_id[]" data-rel="chosen" class="form-control" onchange="getPrice(this.id,'0');unselectproduct(this.id,'0')" >
 										
 										<option value="">Select Product</option>
@@ -208,7 +221,7 @@ $product_current_stock=$this->base_model->get_record_by_id($table_name,array('pr
 $initialStock = isset($product_current_stock->product_current_stock) ? $product_current_stock->product_current_stock : '0';
 						if($initialStock > '0'){
 						?>
-										?>
+										
 											<option value="<?php echo $product->product_id; ?>" ><?php echo $product->product_name; ?></option>
 										<?php }
 										} }?>
@@ -265,9 +278,9 @@ $initialStock = isset($product_current_stock->product_current_stock) ? $product_
 							<div class="form-group col-lg-12">
 							<div class="form-group col-lg-7" style="padding:0;">
 							<div class="row form-group col-lg-12" style="padding:0;" id="sales_invoice_payment_mode-0">
-								<div class="form-group col-lg-3" style="padding:0">
+								<div class="form-group col-lg-2" style="padding:0">
 									
-									<label class="control-label">Payment Mode :</label>
+									<label class="control-label">Payment Mode</label>
 									<div id="payment_div_id_0">
 										<select id="payment_mode-0" name="payment_mode[]" data-rel="chosen" class="form-control" onchange="getcheckcard(this.id,'0');unselectpayment_mode(this.id,'0')" >
 										<option value="">Select</option>
@@ -280,17 +293,21 @@ $initialStock = isset($product_current_stock->product_current_stock) ? $product_
 										</div>
 									</div>
 								
-								<div class="form-group col-lg-3" style="width:140px;">
+								<div class="form-group col-lg-2" style="">
 									<label class="control-label">Amount (Rs.)</label>
-									<input type="text" class="form-control"style="width:120px;" name="payment_mode_amount[]" id="payment_mode_amount_0" onchange="getTotal_received();"  />
+									<input type="text" class="form-control"style="" name="payment_mode_amount[]" id="payment_mode_amount_0" onchange="getTotal_received();"  />
 								</div>
 								<div class="form-group col-lg-3" id="div_card_data_0" style="display:none;">
-									<label class="control-label" id="lable_card_0">Card No.</label>
-									<input type="text" class="form-control" name="card_check_number[]" id="card_check_number_0" maxlength="4" />
+									<label class="control-label" id="lable_card_0">Cheque No & Date</label>
+									<input type="text" class="form-control" name="card_check_number[]" id="card_check_number_0" maxlength="4"  />
 								</div>
 								<div class="form-group col-lg-3" id="div_card_name_0" style="display:none;">
-									<label class="control-label" id="lable_card_name_0">Name on Card </label>
-									<input type="text" class="form-control" name="card_check_name[]" id="card_check_name_0"  />
+									<label class="control-label"  id="lable_card_name_0">Name on Card </label>
+									<input type="text" class="form-control"   name="card_check_name[]" id="card_check_name_0"  />
+								</div>
+								<div class="form-group col-lg-2" id="div_issuing_bank_0" style="display:none;">
+									<label class="control-label" style="width:73px;" id="lable_issuing_bank_0">Issu. Bank </label>
+									<input type="text" class="form-control" name="card_issuing_bank[]" id="card_issuing_bank_0"  />
 								</div>
 								<!--<div class="form-group col-lg-3" id="div_cheque_relese_0" style="display:none;">
 									<label class="control-label" id="lable_cheque_relese_0">Cheque Release</label>
@@ -299,8 +316,9 @@ $initialStock = isset($product_current_stock->product_current_stock) ? $product_
 								
 								
 									<div class="form-group col-lg-3" id="div_cheque_relese_0" style="display:none;">
-									<label class="control-label">Cheque Release</label>
-										<select id="cheque_relese_0" name="cheque_relese[]"  class="form-control"  >
+									<label class="control-label">Cheq. Realization (Y/N)</label>
+										<select id="cheque_relese_0" name="cheque_relese[]"  class="form-control">
+										<option value="select">-Select-</option>
 										<option value="0">No</option>
 										<option value="1">Yes</option>
 										</select>
@@ -318,14 +336,6 @@ $initialStock = isset($product_current_stock->product_current_stock) ? $product_
 							</div>
 							<div class="form-group col-lg-5" style="padding:0px;">
 								
-								<div class="row form-group col-lg-12">
-									<div class="form-group col-lg-6">
-										<label class="control-label pull-right" style=" margin-top: 10px;">Entry Tax(%)</label>
-									</div>
-									<div class="form-group col-lg-6">
-										<input type="text" class="form-control" name="enter_tax_view" id="enter_tax_view" readonly />
-									</div>
-								</div>
 								<div class="row form-group col-lg-12">
 									<div class="form-group col-lg-6">
 										<label class="control-label pull-right" style=" margin-top: 10px;">Entry Tax Amount (Rs.)</label>
@@ -382,12 +392,12 @@ $initialStock = isset($product_current_stock->product_current_stock) ? $product_
 									<input type="text" readonly class="form-control" name="received_amount" id="received_amount" onkeypress="getAmountReceived();" />
 								</div>
 								<div class="form-group col-lg-2 col-lg-push-1">
-									<label class="control-label">Adjustment (Rs.)</label>
-									<input type="text" class="form-control"   name="round_off" id="round_off" onblur="round();" />
+									<label class="control-label" id="label_round_off" style="display:none;">Adjustment (Rs.)</label>
+									<input type="text" class="form-control"   name="round_off" id="round_off" onblur="round();" style="display:none;" />
 								</div>
 								
 								<div class="form-group col-lg-3 col-lg-push-3">
-									<label class="control-label">Amount Refunded (Rs.)</label>
+									<label class="control-label" >Amount Refunded (Rs.)</label>
 									<input type="text" class="form-control" name="amount_refunded" id="amount_refunded" readonly />
 								</div>
 							</div>
@@ -811,7 +821,7 @@ netAmount = parseFloat($("#total_net_amount").val());
 				success : function(res){ 
 				mydata = JSON.parse(res);
 					$('#price_rate-' + divnumber).val(mydata.price_rate.trim());
-					$('#entry_tax, #enter_tax_view').val(mydata.entry_tax.trim());
+					$('#entry_tax').val(mydata.entry_tax.trim());
 					if(mydata.tax.trim()!='null' || mydata.tax.trim()!='')
 					{
 					$('#tax-' + divnumber).val(mydata.tax.trim());	
@@ -833,11 +843,44 @@ netAmount = parseFloat($("#total_net_amount").val());
 	function getcheckcard(id,divnumber)
 	{
 	var payment_mode=$('#'+id+' :selected').val();
-
+          $("#card_check_number_"+divnumber).attr("placeholder", "");  
+		  
+		  var divSize = $(".add_payment_mode > div").size();
+		var pass_hidden='';
+		var counter_pay='0';
+		var flag_show_rounfoff='0';
+		for(var i=0;i<=divSize;i++)
+		{
+			
+		if($("#sales_invoice_payment_mode-"+i).html()!='')
+			{
+				payment_value_sel = $('#payment_mode-'+i+' :selected').val();
+				if(payment_value_sel=='cash')
+				{
+					flag_show_rounfoff=1;
+				}
+			}
+			
+		}
+		if(flag_show_rounfoff==1)
+		 {
+			 $("#round_off").show();
+			 $("#label_round_off").show();
+		 }
+		else
+		{
+			$("#round_off").val('');
+			$("#round_off").hide();
+			$("#label_round_off").hide();
+		}
+		 round();
+		 
 		if(payment_mode=='credit card' || payment_mode=='debit card')
 		{
 		$("#div_card_data_"+divnumber).show();
 		$("#div_card_name_"+divnumber).show();
+		$("#div_issuing_bank_"+divnumber).show();
+		$("#div_issuing_bank_"+divnumber).val('');
 		$("#div_cheque_relese_"+divnumber).hide();
 		$("#lable_card_"+divnumber).html('Card No.');
 		$('#card_check_number_'+divnumber).val('');
@@ -847,18 +890,21 @@ netAmount = parseFloat($("#total_net_amount").val());
 		else if(payment_mode=='cheque' || payment_mode=='neft')
 		{
 		$("#div_card_data_"+divnumber).show();
+		$("#div_issuing_bank_"+divnumber).hide();
+		$("#div_issuing_bank_"+divnumber).val('');
 		$("#div_card_name_"+divnumber).hide();
 		$('#card_check_name_'+divnumber).val('');
 		if(payment_mode=='cheque')
 		{
 			$("#div_cheque_relese_"+divnumber).show();
-			$("#lable_card_"+divnumber).html('Cheque No.');
+			$("#div_issuing_bank_"+divnumber).show();
+			$("#lable_card_"+divnumber).html('Cheque No. & Date');
+			$("#card_check_number_"+divnumber).attr("placeholder", "123456/MM-DD-YYYY");
 			
-		}
-		else{
-			$("#lable_card_"+divnumber).html('NEFT Details');
-			$("#div_cheque_relese_"+divnumber).hide();
-			$('#cheque_relese_'+divnumber).prop('checked', false);
+		}else{
+		$("#lable_card_"+divnumber).html('NEFT Details');
+		$("#div_cheque_relese_"+divnumber).hide();
+		$('#cheque_relese_'+divnumber).prop('checked', false);
 		}
 		$('#card_check_number_'+divnumber).val('');
 		
@@ -867,12 +913,18 @@ netAmount = parseFloat($("#total_net_amount").val());
 		}
 		else
 		{
+		$("#div_cheque_relese_"+divnumber).hide();
+		$("#div_issuing_bank_"+divnumber).hide();
 		$("#div_card_name_"+divnumber).hide();
 		$("#div_cheque_relese_"+divnumber).hide();
 		$('#card_check_name_'+divnumber).val('');
 		$('#cheque_relese_'+divnumber).prop('checked', false);
 		$('#card_check_number_'+divnumber).val('');
 		$("#div_card_data_"+divnumber).hide();
+		}
+		if(payment_mode=='neft'){
+		 $("#div_issuing_bank_"+divnumber).val('');
+		 $("#div_issuing_bank_"+divnumber).show();
 		}
 		
 		
@@ -889,6 +941,7 @@ netAmount = parseFloat($("#total_net_amount").val());
 						//$('#customer_phone_number').val(mydata.modal_customer_phone_number);
 						$('#customer_email_id').val(mydata.modal_customer_email_id);
 						$('#customer_pan_number').val(mydata.modal_customer_pan_number);
+						$('#customer_transaction_id').val(mydata.customer_transaction_id);
 						//$('#id_proof').val(mydata.id_proof);
 						//$('#id_proof :selected').val(mydata.id_proof);
 						//$("#id_proof option[value="+mydata.id_proof+"]").attr("selected", "selected");
@@ -904,7 +957,7 @@ netAmount = parseFloat($("#total_net_amount").val());
 		var my_div = '';
 		$('.add_product_in_sales_invoice').removeClass('hide').css('display','block');	
 		var divSize = $(".add_product_in_sales_invoice > div").size();
-var already_products=$("#selected_products_val").val();
+        var already_products=$("#selected_products_val").val();
 		$.ajax({
 				url : "<?php echo base_url();?>invoice/AjaxAddNewDivCommon",
 				type: "POST",
@@ -950,21 +1003,23 @@ var already_products=$("#selected_payment_val").val();
 		for(var i=0;i<=divSize;i++)
 		{
 			//if($("#payment_mode_amount_"+i).val()!='')
+			
 			if($("#sales_invoice_payment_mode-"+i).html()!='' && ($("#payment_mode_amount_"+i).val())!='')
 			{
 			total_amount_received=total_amount_received+parseFloat($("#payment_mode_amount_"+i).val());
 			}
 		}
 		$("#received_amount").val(total_amount_received);
+	
 		if(($("#total_net_amount").val())!='0' && ($("#total_net_amount").val())!='')
 		{
-		var refunded=parseFloat($("#received_amount").val())-parseFloat($("#total_net_amount").val());
+			var refunded=parseFloat($("#received_amount").val())-parseFloat($("#total_net_amount").val());
 			refunded=parseFloat(refunded).toFixed(2);
-		$("#amount_refunded").val(refunded);
+			$("#amount_refunded").val(refunded);
 		}
 		else
 		{
-		$("#amount_refunded").val('0');
+			$("#amount_refunded").val('0');
 		}
 		getAmountReceived();
 		updateSelectedPaymentHidden();
@@ -1125,8 +1180,8 @@ function getNetAmount(id,net_stock_id,dis){
 	}
 	
 	myTotalValue(); 
-	getTotal_received();
-	  
+	//getTotal_received();
+	  getTotal_received();
 	  
   }
 }
@@ -1314,7 +1369,33 @@ netAmount = parseFloat($("#total_net_amount").val());
 		payment_id = $('#'+id+' :selected').val();
 		for(var k=0;k<=divSize;k++)
 		{
-			if(k!=cur_div && $("#sales_invoice_payment_mode-"+i).html()!='')
+			if(k!=cur_div && $("#sales_invoice_payment_mode-"+k).html()!='')
+			{
+			others_product_val = $('#payment_mode-'+k+' :selected').val();
+				
+					$.ajax({
+					url : "<?php echo base_url();?>invoice/AjaxAddNewDivCommon",
+					type: "POST",
+					data: {divSize:k,select_product:others_product_val,already_products:already_products,pageName:"sales_invoice_change_payment_type"},
+					success: function(res){
+					var arr_res=res.split('|||');
+					$('#payment_div_id_'+arr_res[1]).html(arr_res[2]);		
+					}
+					});
+				
+			}
+		}
+		
+	}
+	function unselectpayment_mode_remove()
+	{
+	updateSelectedPaymentHidden();
+		var divSize = $(".add_payment_mode > div").size();
+		var already_products = $("#selected_payment_val").val();
+		
+		for(var k=0;k<=divSize;k++)
+		{
+			if($("#sales_invoice_payment_mode-"+k).html()!='')
 			{
 			others_product_val = $('#payment_mode-'+k+' :selected').val();
 				
@@ -1530,6 +1611,25 @@ function pan_validate(pan)
 	{
 		$("#generate_invoice_btn").removeClass("disabled");
 		$("#pan_error").remove();
+	}
+}
+
+function transaction_validation(tras_id)
+{
+	$("#tras_id").remove();
+	var regtransaction = /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/;
+	if(regtransaction.test(tras_id) == false)
+	{
+		$("#customer_transaction_id").after("<span class='error' id='tras_id'>Please enter alphanumeric number.</span>");
+		$("#generate_invoice_btn").addClass("disabled");
+	}
+	else{
+		$("#generate_invoice_btn").removeClass("disabled");
+	}
+	if(tras_id == '')
+	{
+		$("#generate_invoice_btn").removeClass("disabled");
+		$("#tras_id").remove();
 	}
 }
 </script>

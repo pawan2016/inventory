@@ -204,20 +204,31 @@ $office_id = $this->session->userdata('office_id');
 							
 							            </div>
 										<div id="show_hide">
+										<?php
+										   }
+										?>
 										<div class="row">
-											<div class="form-group col-lg-6">
+										<div class="form-group col-lg-6">
 												<label class="control-label">Is the transfer complete? </label>
 												<input data-no-uniform="true" id="stock_transferStatus_checked" type="checkbox" class="iphone-toggle">
-												<input type="hidden" name="stock_transferStatus" id="stock_transferStatus" value="No">
+												<?php if($view_receipt_detail->stock_transfer_status == '1'){ ?>
+													<input type="hidden" name="stock_transferStatus" id="stock_transferStatus" value="Yes"  checked>
+												<?php } else{ ?>
+													<input type="hidden" name="stock_transferStatus" id="stock_transferStatus" value="No"  checked>
+												<?php }?>
+												
 											</div>
 										</div>
-									</div>
+										   <div class="row">
+											<div class="form-group col-lg-8" style="visibility:visible;" id="show_closing">
+											<label class="control-label required">Narration</label>
+											<textarea class="form-control" id="narration_recipt" name="narration_recipt" style="resize:none; width:500px" ><?php echo $view_receipt_detail->narration; ?></textarea>
+											</div>
+									   </div>
 									
-									<input type="hidden" name="is_submit" id="is_submit" value='' />
+									<!--<input type="hidden" name="is_submit" id="is_submit" value='' />-->
 										</div>
-										<?php
-										}
-										?>
+									
 										<div class="row">
 											<div class="form-group col-lg-6">
 												<label class="checkbox-inline">

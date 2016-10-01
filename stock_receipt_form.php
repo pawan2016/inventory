@@ -527,11 +527,21 @@ $('#show_closing').removeAttr('style').css('visibility','visible');
 		
 		
 		$('button[type="submit"]').on('click', function() {
-			resetErrors();
+			
+		resetErrors();
 		var url = $('#stock_receipt_form').attr('action');
 		var formData=$('#stock_receipt_form').serialize();
-			divCount = $("#stockReceived_div > div").size();
-		var flag_submit=0;
+		divCount = $("#stockReceived_div > div").size();
+		
+		var check_flag_status ='<?php echo $dataStock->stock_receipt_number; ?>';
+		if(check_flag_status !=''){
+			var flag_submit='1';
+			
+		}else{
+			var flag_submit=0;
+			
+		}
+		
 			for(var i=0;i<divCount;i++)
 			{
 				if($("#stock_received_old"+i).val()!='0')
@@ -554,8 +564,7 @@ $('#show_closing').removeAttr('style').css('visibility','visible');
 					return false;
 				}
 			}
-		$('button[type="submit"]').addClass('disabled');	
-		
+	$('button[type="submit"]').addClass('disabled');
 		//alert(formData);
 		$.ajax({
 			dataType: 'json',
@@ -933,5 +942,10 @@ $('#show_closing').removeAttr('style').css('visibility','visible');
 			$('.iPhoneCheckLabelOff span').css('margin-right','0px');
 			$('#stock_transferStatus_checked').attr("checked",false);
 		}
+	}
+	function check_received()
+	{
+		
+			
 	}
 </script>
